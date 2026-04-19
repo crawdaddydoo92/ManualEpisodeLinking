@@ -2,9 +2,9 @@
 
 ## 📦 Download
 
-Download the latest plugin from the Releases page:
+Download the latest plugin:
 
-[Download the latest plugin:](https://github.com/crawdaddydoo92/ManualEpisodeLinking/releases)
+[Download from Releases](https://github.com/crawdaddydoo92/ManualEpisodeLinking/releases)
 
 ## Overview
 
