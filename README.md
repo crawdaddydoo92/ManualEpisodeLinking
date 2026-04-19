@@ -1,11 +1,5 @@
 # Manual Episode Linking (Jellyfin Plugin)
 
-## 📦 Download
-
-Download the latest plugin:
-
-[Download from Releases](https://github.com/crawdaddydoo92/ManualEpisodeLinking/releases)
-
 ## Overview
 
 Manual Episode Linking is a Jellyfin plugin that allows you to define custom episode-to-episode playback transitions.
@@ -110,10 +104,23 @@ The plugin is configured using a `links.json` file.
 
 ---
 
+## How Linking Works
+
+Links are directional and must be defined for each step in a crossover chain.
+
+For example:
+
+CSI S02E22 → Miami S01E01  
+Miami S01E01 → CSI S02E23  
+
+If you do not include a link to the episode you want to return to in the original series, playback will continue with the next episode in the series you crossed over to. To return to the original series, you must define that link explicitly.
+
+This allows full control over multi-part crossovers spanning multiple shows.
+
 ## ▶️ Playback Behavior
 
 * If a link exists → plugin overrides the next episode
-* If no link exists → Jellyfin default behavior continues
+* If no link exists → Jellyfin continues playback within the current series
 
 ### Additional Behavior
 
