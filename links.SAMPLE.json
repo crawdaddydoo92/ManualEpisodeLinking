@@ -1,0 +1,13 @@
+{
+  "Links": {
+    "episodeA": "episodeB",
+
+    
+  },
+
+  "notes": {
+    "episodeA": "EPISODEA_SERIES_TITLE SxxEyy → EPISODEB_SERIES_TITLE SxxEyy (YYYY)",
+    "episodeB": "EPISDOEB_SERIES_TITLE SxxEyy (Part 2)"
+
+  }
+}
