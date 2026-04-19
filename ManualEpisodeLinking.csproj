@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Jellyfin assemblies referenced from local installation -->
+    <Reference Include="MediaBrowser.Common">
+      <HintPath>/usr/lib/jellyfin/bin/MediaBrowser.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="MediaBrowser.Controller">
+      <HintPath>/usr/lib/jellyfin/bin/MediaBrowser.Controller.dll</HintPath>
+    </Reference>
+    <Reference Include="MediaBrowser.Model">
+      <HintPath>/usr/lib/jellyfin/bin/MediaBrowser.Model.dll</HintPath>
+    </Reference>
+
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+      <HintPath>/usr/lib/jellyfin/bin/Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
