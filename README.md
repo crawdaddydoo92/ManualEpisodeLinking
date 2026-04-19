@@ -1,5 +1,11 @@
 # Manual Episode Linking (Jellyfin Plugin)
 
+## 📦 Download
+
+Download the latest plugin from the Releases page:
+
+[Download from Releases](https://github.com/crawdaddydoo92/ManualEpisodeLinking/releases)
+
 ## Overview
 
 Manual Episode Linking is a Jellyfin plugin that allows you to define custom episode-to-episode playback transitions.
