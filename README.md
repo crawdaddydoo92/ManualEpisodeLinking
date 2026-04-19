@@ -117,16 +117,46 @@ If you do not include a link to the episode you want to return to in the origina
 
 This allows full control over multi-part crossovers spanning multiple shows.
 
+---
+
+## ⚠️ ItemID Stability (Important)
+
+Jellyfin ItemIDs are tied to the underlying media file.
+
+- A normal library refresh will **not** change ItemIDs  
+- Editing metadata in Jellyfin (title, description, etc.) will **not** change ItemIDs  
+
+However, if a file is modified, replaced, or renamed in a way that causes Jellyfin to treat it as a new item, it may be assigned a new ItemID.
+
+If this happens, any existing links in `links.json` will no longer match and must be updated.
+
+### Recommendation
+
+To avoid breaking links:
+
+- Prefer updating episode titles in Jellyfin (metadata editor)  
+- Avoid renaming media files after links have been created  
+
+### Example
+
+Renaming a file like `S02E22.1 → S02E22`
+
+or adding text such as `(Part 1)`
+
+may cause Jellyfin to assign a new ItemID.
+
+---
+
 ## ▶️ Playback Behavior
 
-* If a link exists → plugin overrides the next episode
-* If no link exists → Jellyfin continues playback within the current series
+* If a link exists → plugin overrides the next episode  
+* If no link exists → Jellyfin continues playback within the current series  
 
 ### Additional Behavior
 
-* Skip button works normally
-* Rapid transitions are prevented with cooldown logic
-* Playback only switches after the current episode finishes
+* Skip button works normally  
+* Rapid transitions are prevented with cooldown logic  
+* Playback only switches after the current episode finishes  
 
 ---
 
