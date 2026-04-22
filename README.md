@@ -23,6 +23,24 @@ This plugin allows you to:
 
 ---
 
+## 🆕 New in 1.1.0
+
+* **Full chain support**
+
+  * Link episodes across any number of steps (A → B → C → D → ...)
+
+* **Last-hop protection**
+
+  * Prevents unintended playback when starting at the end of a chain
+  * Only allows links to complete when part of a valid sequence
+
+* **Works with both playback styles**
+
+  * Natural playback (letting episodes finish)
+  * Skip / next controls
+
+---
+
 ## ⚙️ How It Works
 
 The plugin monitors playback and uses a two-phase system:
@@ -32,7 +50,7 @@ The plugin monitors playback and uses a two-phase system:
    * Detects if a custom “next episode” exists
    * Queues the next episode (does NOT interrupt playback)
 
-2. **After playback resets (0–10%)**
+2. **After playback resets (start of next episode)**
 
    * Starts the queued episode at the correct time
 
@@ -69,7 +87,9 @@ Required files:
 * `ManualEpisodeLinking.dll`
 * `links.json`
 
-### 3. Restart Jellyfin
+### 3. Restart Jellyfin (first install only)
+
+After initial installation, changes to `links.json` are applied automatically.
 
 ---
 
@@ -100,22 +120,47 @@ The plugin is configured using a `links.json` file.
 * Values = next episode
 * IDs must be Jellyfin ItemIds
 * IDs should be normalized (lowercase, no dashes)
-* Chains are supported (A → B → C)
+* Chains of any length are supported (A → B → C → D → ...)
 
 ---
 
-## How Linking Works
+### 🔄 Live Reload
+
+The plugin automatically reloads `links.json` when it is modified.
+
+* No restart required after updates
+* Changes apply within a second of saving
+
+---
+
+## 🔗 How Linking Works
 
 Links are directional and must be defined for each step in a crossover chain.
 
-For example:
+Example:
 
-CSI S02E22 → Miami S01E01  
-Miami S01E01 → CSI S02E23  
+CSI S02E22 → Miami S01E01
+Miami S01E01 → CSI S02E23
 
-If you do not include a link to the episode you want to return to in the original series, playback will continue with the next episode in the series you crossed over to. To return to the original series, you must define that link explicitly.
+If you do not include a return link, playback will continue within the crossover series.
 
-This allows full control over multi-part crossovers spanning multiple shows.
+This gives full control over multi-part crossovers across multiple shows.
+
+---
+
+## ▶️ Playback Behavior
+
+* If a link exists → plugin overrides the next episode
+* If no link exists → Jellyfin continues normally
+
+### Last-Hop Protection
+
+If you start playback at the final episode in a chain:
+
+* The plugin will NOT force a jump
+* Jellyfin behaves normally
+
+Once you enter a chain properly, all steps are allowed to complete.
 
 ---
 
@@ -123,48 +168,17 @@ This allows full control over multi-part crossovers spanning multiple shows.
 
 Jellyfin ItemIDs are tied to the underlying media file.
 
-- A normal library refresh will **not** change ItemIDs  
-- Editing metadata in Jellyfin (title, description, etc.) will **not** change ItemIDs  
+* A normal library refresh will **not** change ItemIDs
+* Editing metadata will **not** change ItemIDs
 
-However, if a file is modified, replaced, or renamed in a way that causes Jellyfin to treat it as a new item, it may be assigned a new ItemID.
+However, if a file is modified or replaced, a new ItemID may be assigned.
 
-If this happens, any existing links in `links.json` will no longer match and must be updated.
+If this happens, links in `links.json` must be updated.
 
 ### Recommendation
 
-To avoid breaking links:
-
-- Prefer updating episode titles in Jellyfin (metadata editor)  
-- Avoid renaming media files after links have been created  
-
-### Example
-
-Renaming a file like `S02E22.1 → S02E22`
-
-or adding text such as `(Part 1)`
-
-may cause Jellyfin to assign a new ItemID.
-
----
-
-## ▶️ Playback Behavior
-
-* If a link exists → plugin overrides the next episode  
-* If no link exists → Jellyfin continues playback within the current series  
-
-### Additional Behavior
-
-* Skip button works normally  
-* Rapid transitions are prevented with cooldown logic  
-* Playback only switches after the current episode finishes  
-
----
-
-## ⚠️ Requirements & Assumptions
-
-* Each episode exists only once in your library
-* No duplicate crossover episodes across multiple series
-* One authoritative version per episode
+* Prefer editing metadata inside Jellyfin
+* Avoid renaming files after linking
 
 ---
 
@@ -174,6 +188,7 @@ may cause Jellyfin to assign a new ItemID.
 * Uses polling instead of event hooks
 * Limited multi-session awareness
 * No validation for circular links
+* Scrubbing near the end may trigger linking
 
 ---
 
@@ -194,7 +209,7 @@ This plugin works around that by:
 
 * Queuing the next episode instead of playing immediately
 * Waiting for a stable playback state
-* Executing the transition safely
+* Executing transitions safely
 
 ---
 
