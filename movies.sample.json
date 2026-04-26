@@ -1,0 +1,18 @@
+ {
+  "Settings": {
+    "AllowLastHopFromManualStart": true
+  },
+  "Links": {
+    "ID_for_title_A": "ID_for_title_B",
+    "ID_for_title_B": "ID_for_title_c"
+
+
+  },
+
+  "notes": {
+    "ID_for_title_A": "Title_A",
+    "ID_for_title_B": "Title_B",
+    "ID_for_title_c": "Title_C"    
+
+  }
+}

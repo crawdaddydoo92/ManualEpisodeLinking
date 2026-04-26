@@ -1,0 +1,16 @@
+ {
+  "Settings": {
+    "AllowLastHopFromManualStart": false
+  },
+  "Links": {
+    "Episode_A": "Episode_B",
+    "Episode_B": "Episode_A+1"
+
+  },
+
+  "notes": {
+    "Episode_A": "Series SxxExx (Part 1)",
+    "Episode_B": "Series SxxExx (Part 2)",
+    "Episode_A+1": "Series SxxExx (Return Link)"
+  }
+}
