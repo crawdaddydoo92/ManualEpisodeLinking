@@ -2,9 +2,9 @@
 
 ## Overview
 
-Manual Episode Linking is a Jellyfin plugin that allows you to define custom episode-to-episode playback transitions.
+Manual Episode Linking is a Jellyfin plugin that lets you control what plays next — even across different shows or movies.
 
-It is primarily designed to support **crossovers between different TV series**, where Jellyfin’s default "Next Episode" behavior does not work.
+Originally built for TV crossovers, it now also supports **automatic movie sequel playback**.
 
 ---
 
@@ -12,57 +12,66 @@ It is primarily designed to support **crossovers between different TV series**, 
 
 Jellyfin normally:
 
-* Plays episodes sequentially within a single series
-* Does not support cross-series continuity
+- Plays episodes only within the same series
+- Does not support crossovers between shows
+- Does not link separate movies together
 
-This plugin allows you to:
+This plugin lets you:
 
-* Link episodes across different shows
-* Create seamless crossover playback
-* Maintain correct viewing order without renaming or reorganizing media
+- Seamlessly continue crossovers between different series
+- Automatically play the next movie in a franchise
+- Maintain the correct viewing order without renaming or reorganizing files
+
+---
+
+## 🆕 New in 1.1.1
+
+- **Movie sequel chaining**
+  - Automatically plays the next movie (e.g., trilogies)
+  - Smooth, seamless transitions — no delay
+
+- **Improved playback stability**
+  - Eliminates duplicate triggers
+  - More reliable transitions between items
+
+- **Smarter execution**
+  - Movies transition immediately
+  - TV waits for safe playback reset
 
 ---
 
 ## 🆕 New in 1.1.0
 
-* **Full chain support**
+- **Full chain support**
+  - Link items across any number of steps (A → B → C → D → ...)
 
-  * Link episodes across any number of steps (A → B → C → D → ...)
+- **Last-hop protection**
+  - Prevents unwanted playback when starting at the end of a chain
+  - Only completes links when part of a valid sequence
 
-* **Last-hop protection**
-
-  * Prevents unintended playback when starting at the end of a chain
-  * Only allows links to complete when part of a valid sequence
-
-* **Works with both playback styles**
-
-  * Natural playback (letting episodes finish)
-  * Skip / next controls
+- **Works with all playback styles**
+  - Natural playback (letting items finish)
+  - Skip / next controls
 
 ---
 
 ## ⚙️ How It Works
 
-The plugin monitors playback and uses a two-phase system:
+The plugin watches playback and prepares the next item ahead of time.
 
 1. **Near the end (~99%)**
+   - Detects if a custom next item exists
+   - Queues it without interrupting playback
 
-   * Detects if a custom “next episode” exists
-   * Queues the next episode (does NOT interrupt playback)
+2. **At the correct moment**
+   - Movies: transition immediately
+   - TV: wait for playback reset, then transition
 
-2. **After playback resets (start of next episode)**
+### Key Idea
 
-   * Starts the queued episode at the correct time
+> Detect early → transition at the right moment
 
-### Key Principle
-
-> **Detect early → act late**
-
-This ensures:
-
-* No early playback interruption
-* Stable session handling
-* Compatibility with Jellyfin’s internal behavior
+This avoids interruptions and keeps playback stable.
 
 ---
 
@@ -72,167 +81,3 @@ This ensures:
 
 ```bash
 dotnet build -c Release
-```
-
-### 2. Copy files to Jellyfin
-
-Copy the compiled output to:
-
-```
-/etc/jellyfin/plugins/ManualEpisodeLinking/
-```
-
-Required files:
-
-* `ManualEpisodeLinking.dll`
-* `links.json`
-
-### 3. Restart Jellyfin (first install only)
-
-After initial installation, changes to `links.json` are applied automatically.
-
----
-
-## 🧩 Configuration
-
-The plugin is configured using a `links.json` file.
-
-### Location
-
-```
-/etc/jellyfin/plugins/ManualEpisodeLinking/links.json
-```
-
-### Example
-
-```json
-{
-  "Links": {
-    "EPISODE_ID_A": "EPISODE_ID_B",
-    "EPISODE_ID_B": "EPISODE_ID_C"
-  }
-}
-```
-
-### Notes
-
-* Keys = current episode
-* Values = next episode
-* IDs must be Jellyfin ItemIds
-* IDs should be normalized (lowercase, no dashes)
-* Chains of any length are supported (A → B → C → D → ...)
-
----
-
-### 🔄 Live Reload
-
-The plugin automatically reloads `links.json` when it is modified.
-
-* No restart required after updates
-* Changes apply within a second of saving
-
----
-
-## 🔗 How Linking Works
-
-Links are directional and must be defined for each step in a crossover chain.
-
-Example:
-
-CSI S02E22 → Miami S01E01
-Miami S01E01 → CSI S02E23
-
-If you do not include a return link, playback will continue within the crossover series.
-
-This gives full control over multi-part crossovers across multiple shows.
-
----
-
-## ▶️ Playback Behavior
-
-* If a link exists → plugin overrides the next episode
-* If no link exists → Jellyfin continues normally
-
-### Last-Hop Protection
-
-If you start playback at the final episode in a chain:
-
-* The plugin will NOT force a jump
-* Jellyfin behaves normally
-
-Once you enter a chain properly, all steps are allowed to complete.
-
----
-
-## ⚠️ ItemID Stability (Important)
-
-Jellyfin ItemIDs are tied to the underlying media file.
-
-* A normal library refresh will **not** change ItemIDs
-* Editing metadata will **not** change ItemIDs
-
-However, if a file is modified or replaced, a new ItemID may be assigned.
-
-If this happens, links in `links.json` must be updated.
-
-### Recommendation
-
-* Prefer editing metadata inside Jellyfin
-* Avoid renaming files after linking
-
----
-
-## 🚧 Limitations
-
-* Manual configuration (no UI yet)
-* Uses polling instead of event hooks
-* Limited multi-session awareness
-* No validation for circular links
-* Scrubbing near the end may trigger linking
-
----
-
-## 🔮 Future Improvements
-
-* Web UI for managing links
-* Event-driven playback detection
-* Multi-session support
-* Smarter crossover handling
-
----
-
-## 🧠 Why This Approach
-
-Jellyfin recreates playback sessions between episodes.
-
-This plugin works around that by:
-
-* Queuing the next episode instead of playing immediately
-* Waiting for a stable playback state
-* Executing transitions safely
-
----
-
-## 📁 Project Structure
-
-```
-ManualEpisodeLinking/
-├── PlaybackMonitor.cs
-├── Plugin.cs
-├── links.json
-├── ManualEpisodeLinking.csproj
-```
-
----
-
-## 📜 License / Status
-
-Private development project (for now)
-
----
-
-## 💬 Summary
-
-This plugin gives you precise control over episode order across series, enabling seamless crossover viewing without modifying your media library.
-
----
